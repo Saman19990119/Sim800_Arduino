@@ -1,7 +1,7 @@
 /********************
 Author: Saman
 4Terminal_Sim800
-last update: 2026/08/02
+last update: 2026/08/21
 controll 4rellays with sending R1~4 on/off or all on or all off
 *********************/
 #include <SoftwareSerial.h>
