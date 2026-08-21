@@ -1,17 +1,26 @@
 /********************
 Author: Saman
-Sim800IntegrationSystem 2.0
+4Terminal_Sim800
 last update: 2026/08/02
+controll 4rellays with sending R1~4 on/off or all on or all off
 *********************/
 #include <SoftwareSerial.h>
 SoftwareSerial sim800(10,11);
 //*Arduino D10 = RX & Arduino D11 = TX*/
+int RedLED = 8;
+int GreenLED = 9;
 int retry = 10;
-const char PHONE[]="write your number";
+int R1 = 4;
+int R2 = 3;
+int R3 = 2;
+int R4 = 5;
+const char PHONE[]="+989396969233";/*receiver*/
 int latestSMSIndex = -1;
 int smsindex;
 //BUFFER USED FOR RECEIVING DATA
 String response="";
+
+
 //CLEAR SERIAL BUFFER
 void clearBuffer()
 {
@@ -330,34 +339,42 @@ bool deleteSMS(int index)
 /*SETUP*/
 void setup()
 {
+  pinMode(R1,OUTPUT);
+  pinMode(R2,OUTPUT);
+  pinMode(R3,OUTPUT);
+  pinMode(R4,OUTPUT);
+  digitalWrite(R1,LOW);
+  digitalWrite(R2,LOW);
+  digitalWrite(R3,LOW);
+  digitalWrite(R4,LOW);
   Serial.begin(9600);
   sim800.begin(9600);
-  pinMode(8,OUTPUT);
-  digitalWrite(8,HIGH);
-  pinMode(9,OUTPUT);
-  digitalWrite(9,LOW);
+  pinMode(RedLED,OUTPUT);
+  digitalWrite(RedLED,HIGH);
+  pinMode(GreenLED,OUTPUT);
+  digitalWrite(GreenLED,LOW);
   if(sendCommandUntilOK("AT"))
   {
     Serial.println("AT OK");
-    digitalWrite(8,LOW);
-    digitalWrite(9,HIGH);
+    digitalWrite(RedLED,LOW);
+    digitalWrite(GreenLED,HIGH);
     delay(1000);
-    digitalWrite(9,LOW);
-    digitalWrite(8,HIGH);
+    digitalWrite(GreenLED,LOW);
+    digitalWrite(RedLED,HIGH);
     if(checkSignal())
     {
       Serial.println("Signal OK");
-      digitalWrite(8,LOW);
-      digitalWrite(9,HIGH);
+      digitalWrite(RedLED,LOW);
+      digitalWrite(GreenLED,HIGH);
       delay(1000);
-      digitalWrite(9,LOW);
-      digitalWrite(8,HIGH);
+      digitalWrite(GreenLED,LOW);
+      digitalWrite(RedLED,HIGH);
       if(checkNetwork())
       { 
         Serial.println("Network Ok");
         Serial.println("Waiting For SMS...");
-        digitalWrite(8,LOW);  
-        digitalWrite(9,HIGH);
+        digitalWrite(RedLED,LOW);  
+        digitalWrite(GreenLED,HIGH);
         return true;
         }
       Serial.println("NETWORK NOT REGISTERED");
@@ -370,9 +387,7 @@ void setup()
   return false;
 }
 
-/********main LOOP
-*********you can add your conditions here and write your speccific script at the sendSMS("your preffered text")
-**********/
+/*Main LOOP*/
 
 void loop()
 {
@@ -382,73 +397,142 @@ void loop()
         String message = readSMS(latestSMSIndex);
         Serial.print("Received: ");
         Serial.println(message);
-        if(message == "green on")
+        if((message == "R1 on") || (message == "r1 on") )
         {
-            sendSMS("Green On recieved");
-            for(int i = 0; i < 50; i++)
-            {
-                digitalWrite(8, HIGH);
-                digitalWrite(9, LOW);
-                delay(100);
-                digitalWrite(8, LOW);
-                digitalWrite(9, HIGH);
-                delay(100);
-            }
+            sendSMS("Rellay 1 Turned on");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R1,HIGH);
           deleteSMS(latestSMSIndex);
           latestSMSIndex = -1;
         }
-        else if(message == "red on")
+        else if((message == "R1 off") || (message == "r1 off"))
         {
-            sendSMS("Red On recieved");
-            for(int i = 0; i < 50; i++)
-            {
-                digitalWrite(8, LOW);
-                digitalWrite(9, HIGH);
-                delay(100);
-                digitalWrite(8, HIGH);
-                digitalWrite(9, LOW);
-                delay(100);
-            }
+            sendSMS("Rellay 1 turned off");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R1,LOW);
             deleteSMS(latestSMSIndex);
             latestSMSIndex = -1;
         }
-        else if(message == "both on")
+        else if((message == "R2 on") || (message == "r2 on") )
         {
-            sendSMS("Both On recieved");
-            for(int i = 0; i < 50; i++)
-            {
-                digitalWrite(8, LOW);
-                digitalWrite(9, HIGH);
-                delay(100);
-                digitalWrite(8, HIGH);
-                digitalWrite(9, LOW);
-                delay(100);
-            }
-            deleteSMS(latestSMSIndex);
-            latestSMSIndex = -1;
-            digitalWrite(8, HIGH);
-            digitalWrite(9, HIGH);
-        }
-        else if(message == "off")
-        {
-            sendSMS("Off recieved");
-            for(int i = 0; i < 50; i++)
-            {
-                digitalWrite(8, LOW);
-                digitalWrite(9, HIGH);
-                delay(100);
-                digitalWrite(8, HIGH);
-                digitalWrite(9, LOW);
-                delay(100);
-            }
-             digitalWrite(8, LOW);
-             digitalWrite(9, LOW);            
+            sendSMS("Rellay 2 Turned on");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R2,HIGH);
           deleteSMS(latestSMSIndex);
           latestSMSIndex = -1;
-         }
+        }
+        else if((message == "R2 off") || (message == "r2 off"))
+        {
+            sendSMS("Rellay 2 turned off");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R2,LOW);
+            deleteSMS(latestSMSIndex);
+            latestSMSIndex = -1;
+        }
+        else if((message == "R3 on") || (message == "r3 on") )
+        {
+            sendSMS("Rellay 3 Turned on");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R3,HIGH);
+          deleteSMS(latestSMSIndex);
+          latestSMSIndex = -1;
+        }
+        else if((message == "R3 off") || (message == "r3 off"))
+        {
+            sendSMS("Rellay 3 turned off");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R3,LOW);
+            deleteSMS(latestSMSIndex);
+            latestSMSIndex = -1;
+        }
+        else if((message == "R4 on") || (message == "r4 on") )
+        {
+            sendSMS("Rellay 4 Turned on");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R4,HIGH);
+          deleteSMS(latestSMSIndex);
+          latestSMSIndex = -1;
+        }
+        else if((message == "R4 off") || (message == "r4 off"))
+        {
+            sendSMS("Rellay 4 turned off");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R4,LOW);
+            deleteSMS(latestSMSIndex);
+            latestSMSIndex = -1;
+        }
+
+        else if((message == "All ON") || (message == "all on"))
+        {
+            sendSMS("All of the Rellays turned on");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R1,HIGH);
+            digitalWrite(R2,HIGH);            
+            digitalWrite(R3,HIGH);
+            digitalWrite(R4,HIGH);
+            deleteSMS(latestSMSIndex);
+            latestSMSIndex = -1;
+        }
+        else if((message == "All Off") || (message == "all off"))
+        {
+            sendSMS("All of the Rellays turned off");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+            digitalWrite(R1,LOW);
+            digitalWrite(R2,LOW);            
+            digitalWrite(R3,LOW);
+            digitalWrite(R4,LOW);
+            deleteSMS(latestSMSIndex);
+            latestSMSIndex = -1;
+        }
+        
          else
          {
-          sendSMS("Wrong Input");
+            digitalWrite(RedLED, HIGH);
+            digitalWrite(GreenLED, LOW);
+            delay(100);
+            digitalWrite(RedLED, LOW);
+            digitalWrite(GreenLED, HIGH);
+          sendSMS("Wrong Input, try again...");
           deleteSMS(latestSMSIndex);
           latestSMSIndex = -1;
           }
