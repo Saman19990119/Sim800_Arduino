@@ -14,7 +14,7 @@ int R1 = 4;
 int R2 = 3;
 int R3 = 2;
 int R4 = 5;
-const char PHONE[]="+989396969233";/*receiver*/
+const char PHONE[]="";/*receiver*/
 int latestSMSIndex = -1;
 int smsindex;
 //BUFFER USED FOR RECEIVING DATA
